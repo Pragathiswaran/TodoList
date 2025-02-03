@@ -5,7 +5,7 @@ import Card from "./components/Card";
 import moment from 'moment'
 import useLocalStorage from "./hooks/useLocalStorage";
 
-function App() {
+const App = () => {
 
   const [todos, addTodo, removeTodo, updateTodo] = useLocalStorage('Todo', []);
   
