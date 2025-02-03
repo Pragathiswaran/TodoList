@@ -1,47 +1,48 @@
-import {useState} from 'react'
+import { useState } from 'react'
 
 const useLocalStorage = (key, initialValue) => {
-    const [getItem, setgetItem] = useState(() => {
-        try{
-            const item = window.localStorage.getItem(key);
-            return item ? JSON.parse(item) : initialValue;
-           
-        }catch(error){
+  
+    const [Todo, setTodo] = useState(() => {
+        try {
+            const task = window.localStorage.getItem(key);
+            return task ? JSON.parse(task) : initialValue;
+        } catch (error) {
             console.error(error);
+            return initialValue; 
         }
-    })
+    });
 
-    const addItem = (value) =>{
-        try{
-            const valueToStore = value instanceof Function ? value(storedValue) : value
-            setgetItem(valueToStore);
-            window.localStorage.setItem(key,JSON.stringify(valueToStore));
-        }catch (error){
+    const addTodo = (newTodo) => {
+       try {
+         const valueToStore = [...Todo, newTodo];
+         setTodo(valueToStore);
+         window.localStorage.setItem(key, JSON.stringify(valueToStore));
+       } catch (error) {
+            console.error(error);
+       }
+    }
+
+    const removeTodo = (index) => {
+        try {
+            const remove = Todo.filter((task, i) => i !== index);
+            setTodo(remove);
+            window.localStorage.setItem(key, JSON.stringify(remove));
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const updateTodo = (index, value) => {
+        try {
+            const updatedTodo = Todo.map((task, i) => i === index ? { ...task, heading: value.heading, task: value.task } : task);
+            setTodo(updatedTodo);
+            window.localStorage.setItem(key, JSON.stringify(updatedTodo));
+        } catch (error) {
             console.error(error);
         }
     }
 
-    const removeItem = (index)=>{
-        try{
-            const updatedArray = getItem.map((item,i)=>i === index ? null : item).filter(item => item !== null);
-            setgetItem(updatedArray);
-            window.localStorage.setItem(key,JSON.stringify(updatedArray));
-        }catch(error){
-            console.error(error);
-        }
-    }
-    const updateItem = (index,value)=>{
-        try{
-            const updatedArray = getItem
-            updatedArray.map((item,id)=>id === index ? item.task = value : item)
-            setgetItem(updatedArray);
-            window.localStorage .setItem(key,JSON.stringify(updatedArray));
-        }catch(error){
-            console.error(error);
-        }
-    }
-
-    return [getItem, addItem, removeItem, updateItem];
+    return [Todo, addTodo, removeTodo, updateTodo];
 }
 
-export default useLocalStorage;
+export default useLocalStorage

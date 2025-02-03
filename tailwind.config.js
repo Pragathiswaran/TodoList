@@ -3,24 +3,16 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    'node_modules/preline/dist/*.js',
   ],
   theme: {
     extend: {},
   },
-  plugins: [require('daisyui'),
-    function ({ addUtilities }) {
-      addUtilities({
-        '.scrollbar-hide': {
-          /* Hide scrollbar for WebKit-based browsers */
-          '::-webkit-scrollbar': {
-            display: 'none',
-          },
-          /* Hide scrollbar for other browsers like Firefox */
-          '-ms-overflow-style': 'none',  /* Internet Explorer 10+ */
-          'scrollbar-width': 'none',  /* Firefox */
-        },
-      });
-    }
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+    require('tailwind-scrollbar-hide'),
+    require('preline/plugin'),
+    // require('tailwind-scrollbar'),
   ],
 }
 

@@ -1,75 +1,32 @@
-import {React, useState} from 'react';
-import SaveForm from './components/addTodoList';
-import EditForm from './components/editTodoList';
-import ListTodo from './components/listTodo';
-import {toast} from 'react-toastify';
-import useLocalStorage from './hooks/useLocalStorage';
+import React, { useEffect, useState } from "react"
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import Card from "./components/Card";
+import moment from 'moment'
+import useLocalStorage from "./hooks/useLocalStorage";
 
 function App() {
-  const [task, setTask] = useState('');
-  const [todolist, setTodolist,removeItem,updateItem] = useLocalStorage("todolist",[]);
-  const [editTodoList, setEditToDoList] = useState(false);
-  const [editTodoListValue, setEditTodoListValue] = useState('');
-  const [editTodoListIndex,setEditTodoListIndex] = useState('');
 
-  const timeDate = ()=>{
-    const date = new Date();
-    const time$date = date.toLocaleString('en-ID').split(',')
-    return `${time$date}`
+  const [todos, addTodo, removeTodo, updateTodo] = useLocalStorage('Todo', []);
+  
+  const addTodoHandler = (newTodo) => {
+    const date = moment().format('MMM Do YYYY, h:mm A');
+    addTodo({...newTodo, date})
   }
 
-  const addList = (e)=>{
-    e.preventDefault();
-    if(task === ''){
-      toast.error('Please enter a task');
-    } else {
-      const updateTodoList = [...todolist,{'task':task, 'create':timeDate()}]
-      setTodolist(updateTodoList);
-      setTask('');
-    }
-  }
-
-  const deleteList = (index)=>{
-    removeItem(index)
-  }
-
-  const editList =(index, item)=>{
-    setEditTodoListValue(item.task);
-    setEditTodoListIndex(index);
-    setEditToDoList(true)
-  }
-
-  const updatedList = (e)=>{
-    e.preventDefault()
-    updateItem(editTodoListIndex,editTodoListValue)
-    setEditToDoList(false)
-    setEditTodoListValue('')
-    setEditTodoListIndex('')
-  }
- 
- 
   return (
     <>
-    <div className='flex justify-center font-mono mt-14'>
-      <div className='border-2 w-1/2 py-16 border-accent max-h-full'>
-      <h1 className='text-center text-4xl mb-20'>Todo List</h1>
-      {!editTodoList &&
-        <SaveForm addLists={addList} tasks={task} setTasks={setTask}/>
-      }
-      {editTodoList &&
-        <EditForm updatedList={updatedList} editTodoListValue={editTodoListValue} setEditTodoListValue={setEditTodoListValue}
-        />
-      }
-      <ul className='ml-auto mr-auto w-3/4 mt-10 max-h-72 overflow-hidden overflow-y-scroll scrollbar-hide scroll-smooth'>
-        <ListTodo todolist={todolist} editList={editList} deleteList={deleteList}/>
-      </ul>
-      </div> 
-    </div>
-
+      <div className="flex flex-col h-screen">
+        <Navbar />
+          <div className="max-h-[calc(100vh-10rem)] overflow-y-auto mt-24 mb-36 md:mx-auto grid xl:grid-cols-3 
+            lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 justify-items-center lg:gap-8 md:gap-6 sm:gap-y-4 gap-y-4 
+            scrollbar-hide scroll-smooth">
+              {todos.length > 0 ? <Card todoData={todos} updateTodoTask={updateTodo} removeTodoTask={removeTodo}/> : <h1 className='text-2xl font-semibold text-center'>No Todo's</h1>}  
+          </div>
+        <Footer addTodo={addTodoHandler}/>
+      </div>
     </>
-
-  );
+  )
 }
 
-
-export default App;
+export default App
